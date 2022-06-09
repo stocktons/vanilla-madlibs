@@ -1,3 +1,5 @@
+/** FIRST DRAFT - see models.js and ui.js for current draft */
+
 "use strict";
 const MADLIBS_URL = 'http://madlibz.herokuapp.com/api/random'
 
