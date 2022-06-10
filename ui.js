@@ -56,29 +56,49 @@ function createBlanks() {
   MADLIBS_FORM.addEventListener('submit', getUserChoices);
 }
 
+/** Grabs user entries from form blanks, places them into an array
+ * Disables form button to prevent re-submissions
+ */
 function getUserChoices(event) {
   console.log("way to click that button!")
   event.preventDefault();
+  const submitButton = MADLIBS_FORM.lastChild;
+  MADLIBS_FORM.removeChild(submitButton);
   const respList = document.querySelectorAll('[type="text"]')
   const values = Array.from(respList).map(r => r.value);
   createStory(values);
 }
 
+/** Takes in user input and alternates it with the Madlib's story text. 
+ */
 function createStory(userInput) {
-  // TODO: this needs work to get rid of awkward spaces
+  let story = '';
+  
   const storyArr = madlib.storyText.map((s, i) => {
+    // sometimes arrays are not of equal length, or have a 0 to mark the end.
     if (s === undefined || s === 0) s = '';
     if (userInput[i] === undefined) userInput[i] = '';
+    // trim any extra white space from both storyText and user input
     return `${s.toString().trim()} ${userInput[i].trim()}`
   });
-  addStory(storyArr.join(" "));
+  
+  // When a storyText snippet begins with a letter, but not an "s ", add
+  // a space before. Otherwise, don't a space, because it's either punctuation
+  // like a period at the end of a sentence, or an s pluralizing a word. 
+  for (const str of storyArr) {
+    if ((str.charCodeAt(str[0]) > 64 && str.charCodeAt(str[0] < 123)) && !(str.startsWith("s "))) {
+      story += ` ${str}`;
+    } else {
+      story += str;
+    }
+  }
+  addStory(story);
 }
 
 function addStory(story) {
-  const newStory = document.createElement("div");
-  newStory.setAttribute("id", "story");
-  newStory.innerHTML = story;
-  STORY.append(story);
+  const p = document.createElement("p");
+  STORY.append(p);
+  p.innerText = story;
   // reveal Title
   document.getElementById("title").hidden = false;
 }
